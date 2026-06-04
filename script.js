@@ -66,15 +66,17 @@ function showSiteSnackbar(message) {
     return;
   }
 
+  siteSnackbar.classList.remove("visible", "animating");
+  void siteSnackbar.offsetWidth;
   siteSnackbar.textContent = message;
-  siteSnackbar.classList.add("visible");
+  siteSnackbar.classList.add("visible", "animating");
 
   if (heroSnackHideTimer) {
     window.clearTimeout(heroSnackHideTimer);
   }
 
   heroSnackHideTimer = window.setTimeout(() => {
-    siteSnackbar.classList.remove("visible");
+    siteSnackbar.classList.remove("visible", "animating");
   }, 3000);
 }
 

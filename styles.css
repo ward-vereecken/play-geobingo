@@ -1269,11 +1269,31 @@ button {
     opacity 180ms ease,
     transform 220ms ease;
   z-index: 20;
+  will-change: transform, opacity;
 }
 
 .site-snackbar.visible {
   opacity: 1;
   transform: translate(-50%, 0);
+}
+
+.site-snackbar.animating {
+  animation: snackbar-pop 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes snackbar-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 30px) scale(0.94);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -4px) scale(1.018);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
 }
 
 .reveal {
