@@ -78,7 +78,7 @@ function showSiteSnackbar(message) {
 
   heroSnackHideTimer = window.setTimeout(() => {
     siteSnackbar.classList.remove("visible", "animating");
-  }, 4300);
+  }, 5200);
 }
 
 function handleHeroCardSnack() {
@@ -359,13 +359,14 @@ const miniLabelIcon = document.getElementById("mini-lesson-label-icon");
 const miniMedia = document.getElementById("mini-lesson-media");
 const miniOptions = document.getElementById("mini-lesson-options");
 const miniFact = document.getElementById("mini-lesson-fact");
+const miniFactIcon = document.getElementById("mini-lesson-fact-icon");
 const miniFeedback = document.getElementById("mini-lesson-feedback");
 const miniProgress = document.getElementById("mini-lesson-progress");
 const miniReset = document.getElementById("mini-lesson-reset");
 const miniNext = document.getElementById("mini-lesson-next");
 const miniLearnAll = document.getElementById("mini-lesson-learn-all");
 
-if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFeedback && miniProgress && miniReset && miniNext && miniLearnAll) {
+if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFactIcon && miniFeedback && miniProgress && miniReset && miniNext && miniLearnAll) {
   let currentQuestionIndex = 0;
   let score = 0;
   let locked = false;
@@ -724,9 +725,11 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
     miniMedia.classList.add("is-empty");
     teardownLeafletMap();
     miniFeedback.textContent = "That was only a tiny sample. The real app goes much deeper.";
+    miniFactIcon.src = "./assets/icons/learn2.webp";
     miniLearnAll.textContent = "Learn the world";
     setFactVisibility(true);
     miniNext.disabled = true;
+    miniNext.style.display = "none";
   }
 
   function goToNextQuestion() {
@@ -744,6 +747,8 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
     pinpointAnswered = false;
     setNextEnabled(false);
     setFactVisibility(false);
+    miniFactIcon.src = "./assets/icons/light1.webp";
+    miniNext.style.display = "";
     updateLessonChrome(question);
     miniTitle.classList.toggle(
       "fit-one-line",
