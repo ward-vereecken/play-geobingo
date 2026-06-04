@@ -62,7 +62,7 @@ const ctaReviews = [
   },
 ];
 
-function showSiteSnackbar(message) {
+function showSiteSnackbar(message, duration = 5200) {
   if (!siteSnackbar) {
     return;
   }
@@ -78,7 +78,7 @@ function showSiteSnackbar(message) {
 
   heroSnackHideTimer = window.setTimeout(() => {
     siteSnackbar.classList.remove("visible", "animating");
-  }, 5200);
+  }, duration);
 }
 
 function handleHeroCardSnack() {
@@ -357,20 +357,24 @@ const miniLessonQuestions = [
 const miniTitle = document.getElementById("mini-lesson-title");
 const miniLabelIcon = document.getElementById("mini-lesson-label-icon");
 const miniMedia = document.getElementById("mini-lesson-media");
+const miniInlineTools = document.getElementById("mini-lesson-inline-tools");
 const miniOptions = document.getElementById("mini-lesson-options");
 const miniFact = document.getElementById("mini-lesson-fact");
 const miniFactIcon = document.getElementById("mini-lesson-fact-icon");
 const miniFeedback = document.getElementById("mini-lesson-feedback");
 const miniProgress = document.getElementById("mini-lesson-progress");
 const miniReset = document.getElementById("mini-lesson-reset");
+const miniFastToggle = document.getElementById("mini-lesson-fast-toggle");
+const miniFastToggleIcon = document.getElementById("mini-lesson-fast-toggle-icon");
 const miniNext = document.getElementById("mini-lesson-next");
 const miniLearnAll = document.getElementById("mini-lesson-learn-all");
 
-if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFactIcon && miniFeedback && miniProgress && miniReset && miniNext && miniLearnAll) {
+if (miniTitle && miniLabelIcon && miniMedia && miniInlineTools && miniOptions && miniFact && miniFactIcon && miniFeedback && miniProgress && miniReset && miniFastToggle && miniFastToggleIcon && miniNext && miniLearnAll) {
   let currentQuestionIndex = 0;
   let score = 0;
   let locked = false;
   let answeredCurrentQuestion = false;
+  let miniFastModeEnabled = false;
   let leafMap = null;
   let leafGeoLayer = null;
   let leafHighlightGlowLayer = null;
@@ -379,6 +383,7 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
   let leafSuccessCoreLayer = null;
   let capitalMarkerLayer = null;
   let pinpointAnswered = false;
+  let miniFastAdvanceTimer = null;
 
   const lessonTypeMeta = {
     flags: {
@@ -408,10 +413,47 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
     miniNext.disabled = !enabled;
   }
 
+  function clearMiniFastAdvanceTimer() {
+    if (miniFastAdvanceTimer) {
+      window.clearTimeout(miniFastAdvanceTimer);
+      miniFastAdvanceTimer = null;
+    }
+  }
+
   function updateLessonChrome(question) {
     const meta = lessonTypeMeta[question.lessonFamily] || lessonTypeMeta.countries;
     miniLabelIcon.src = meta.icon;
     miniLearnAll.textContent = meta.cta;
+  }
+
+  function updateMiniFastToggleVisual() {
+    miniFastToggle.classList.toggle("is-active", miniFastModeEnabled);
+    miniFastToggleIcon.src = miniFastModeEnabled
+      ? "./assets/icons/fast_mode3.webp"
+      : "./assets/icons/slow_mode1.webp";
+    miniNext.style.display = miniFastModeEnabled ? "none" : "";
+  }
+
+  function showFastModeSnackbar() {
+    if (miniFastModeEnabled) {
+      showSiteSnackbar(
+        'Fast mode activated! No need to tap "Next" anymore after answering a question now. You might miss the fun facts though!',
+        8000,
+      );
+      return;
+    }
+
+    showSiteSnackbar(
+      'Fast mode turned off. You will need to tap "Next" again after answering, and you will see the fun facts normally.',
+      8000,
+    );
+  }
+
+  function maybeAutoAdvanceAnsweredQuestion() {
+    if (!miniFastModeEnabled || !answeredCurrentQuestion) {
+      return;
+    }
+    scheduleMiniFastAdvance();
   }
 
   function setFactVisibility(visible) {
@@ -419,6 +461,7 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
   }
 
   function teardownLeafletMap() {
+    clearMiniFastAdvanceTimer();
     if (capitalMarkerLayer) {
       if (typeof capitalMarkerLayer.remove === "function") {
         capitalMarkerLayer.remove();
@@ -472,6 +515,30 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
     return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
   }
 
+  function updateFastModeToolVisual() {
+    const fastButton = document.getElementById("mini-map-tool-fast");
+    const fastIcon = document.getElementById("mini-map-tool-fast-icon");
+    if (!fastButton || !fastIcon) {
+      return;
+    }
+
+    fastButton.classList.toggle("is-active", miniFastModeEnabled);
+    fastIcon.src = miniFastModeEnabled
+      ? "./assets/icons/fast_mode3.webp"
+      : "./assets/icons/slow_mode1.webp";
+  }
+
+  function scheduleMiniFastAdvance() {
+    clearMiniFastAdvanceTimer();
+    if (!miniFastModeEnabled) {
+      return;
+    }
+    miniFastAdvanceTimer = window.setTimeout(() => {
+      clearMiniFastAdvanceTimer();
+      goToNextQuestion();
+    }, 900);
+  }
+
   function renderLeafletMap(question) {
     if (!miniMedia || !window.L || !demoWorldGeoJson) {
       miniMedia.innerHTML = '<div class="mini-lesson-map-shell"><div class="mini-map-caption">Map preview unavailable here.</div></div>';
@@ -485,8 +552,24 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
 
     miniMedia.innerHTML = `
       <div class="mini-lesson-map-shell">
+        <div class="mini-map-tool-panel">
+          <button class="mini-map-tool" id="mini-map-tool-zoom-in" type="button" aria-label="Zoom in">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14"></path>
+              <path d="M5 12h14"></path>
+            </svg>
+          </button>
+          <button class="mini-map-tool" id="mini-map-tool-zoom-out" type="button" aria-label="Zoom out">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14"></path>
+            </svg>
+          </button>
+          <button class="mini-map-tool ${miniFastModeEnabled ? "is-active" : ""}" id="mini-map-tool-fast" data-action="fast" type="button" aria-label="Toggle fast mode">
+            <img id="mini-map-tool-fast-icon" src="${miniFastModeEnabled ? "./assets/icons/fast_mode3.webp" : "./assets/icons/slow_mode1.webp"}" alt="" />
+          </button>
+        </div>
         <div class="mini-lesson-map" id="mini-lesson-map-canvas"></div>
-        <div class="mini-map-caption">${isPinpoint ? "Move around the real map and tap the country itself." : isCapitalMap ? "Japan is highlighted, and Tokyo is marked on the map." : "Pan and zoom the real world map while the answer stays highlighted."}</div>
+        <div class="mini-map-caption">${isPinpoint ? "Move around the real map and tap the country itself." : isCapitalMap ? "" : "Pan and zoom the real world map while the answer stays highlighted."}</div>
       </div>
     `;
 
@@ -496,11 +579,38 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
     teardownLeafletMap();
 
     leafMap = L.map(mapNode, {
-      zoomControl: true,
+      zoomControl: false,
       attributionControl: false,
       worldCopyJump: true,
       preferCanvas: true,
     }).setView(question.mapCenter || [22, 10], question.mapZoom || 2);
+
+    const zoomInButton = document.getElementById("mini-map-tool-zoom-in");
+    const zoomOutButton = document.getElementById("mini-map-tool-zoom-out");
+    const fastButton = document.getElementById("mini-map-tool-fast");
+
+    [zoomInButton, zoomOutButton, fastButton].forEach((button) => {
+      if (!button) {
+        return;
+      }
+      button.addEventListener("pointerdown", () => {
+        button.classList.add("is-pressed");
+      });
+      const clearPressed = () => button.classList.remove("is-pressed");
+      button.addEventListener("pointerup", clearPressed);
+      button.addEventListener("pointerleave", clearPressed);
+      button.addEventListener("pointercancel", clearPressed);
+    });
+
+    zoomInButton?.addEventListener("click", () => leafMap?.zoomIn());
+    zoomOutButton?.addEventListener("click", () => leafMap?.zoomOut());
+    fastButton?.addEventListener("click", () => {
+      miniFastModeEnabled = !miniFastModeEnabled;
+      updateFastModeToolVisual();
+      updateMiniFastToggleVisual();
+      showFastModeSnackbar();
+      maybeAutoAdvanceAnsweredQuestion();
+    });
 
     L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
       subdomains: "abcd",
@@ -622,9 +732,14 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
                 } else {
                   miniFeedback.textContent = `Not quite. That was ${clickedName}. The correct answer is ${targetName}.`;
                 }
-
-                setFactVisibility(true);
-                setNextEnabled(true);
+                if (miniFastModeEnabled) {
+                  setFactVisibility(false);
+                  setNextEnabled(false);
+                  scheduleMiniFastAdvance();
+                } else {
+                  setFactVisibility(true);
+                  setNextEnabled(true);
+                }
               },
             });
           }
@@ -691,6 +806,9 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
 
   function renderMiniMedia(question) {
     miniMedia.innerHTML = "";
+    miniFastToggle.classList.remove("is-in-media");
+    miniInlineTools.classList.add("is-hidden");
+    miniInlineTools.appendChild(miniFastToggle);
 
     if (question.type === "flag" && question.media?.src) {
       miniMedia.classList.remove("is-empty");
@@ -703,6 +821,11 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
           </div>
         </div>
       `;
+      const flagShell = miniMedia.querySelector(".mini-lesson-flag-shell");
+      if (flagShell) {
+        miniFastToggle.classList.add("is-in-media");
+        flagShell.appendChild(miniFastToggle);
+      }
       return;
     }
 
@@ -714,15 +837,20 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
 
     miniMedia.classList.add("is-empty");
     teardownLeafletMap();
+    miniInlineTools.classList.remove("is-hidden");
   }
 
   function finishMiniLesson() {
+    clearMiniFastAdvanceTimer();
     miniTitle.classList.remove("fit-one-line");
     miniTitle.textContent = `Demo finished. You got ${score} / ${miniLessonQuestions.length}.`;
     miniProgress.textContent = "";
     miniOptions.innerHTML = "";
     miniMedia.innerHTML = "";
     miniMedia.classList.add("is-empty");
+    miniInlineTools.classList.add("is-hidden");
+    miniFastToggle.classList.remove("is-in-media");
+    miniInlineTools.appendChild(miniFastToggle);
     teardownLeafletMap();
     miniFeedback.textContent = "That was only a tiny sample. The real app goes much deeper.";
     miniFactIcon.src = "./assets/icons/learn2.webp";
@@ -743,12 +871,13 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
 
   function renderMiniQuestion() {
     const question = miniLessonQuestions[currentQuestionIndex];
+    clearMiniFastAdvanceTimer();
     locked = false;
     pinpointAnswered = false;
     setNextEnabled(false);
     setFactVisibility(false);
     miniFactIcon.src = "./assets/icons/light1.webp";
-    miniNext.style.display = "";
+    miniNext.style.display = miniFastModeEnabled ? "none" : "";
     updateLessonChrome(question);
     miniTitle.classList.toggle(
       "fit-one-line",
@@ -805,9 +934,14 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
       button.classList.add("incorrect");
       miniFeedback.textContent = `Not quite. The correct answer is ${question.answer}.`;
     }
-
-    setFactVisibility(true);
-    setNextEnabled(true);
+    if (miniFastModeEnabled) {
+      setFactVisibility(false);
+      setNextEnabled(false);
+      scheduleMiniFastAdvance();
+    } else {
+      setFactVisibility(true);
+      setNextEnabled(true);
+    }
   }
 
   miniNext.addEventListener("click", () => {
@@ -821,6 +955,7 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
     currentQuestionIndex = 0;
     score = 0;
     locked = false;
+    clearMiniFastAdvanceTimer();
     setNextEnabled(false);
     setFactVisibility(false);
     miniMedia.innerHTML = "";
@@ -829,9 +964,28 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFa
     renderMiniQuestion();
   });
 
+  miniFastToggle.addEventListener("pointerdown", () => {
+    miniFastToggle.classList.add("is-pressed");
+  });
+
+  ["pointerup", "pointerleave", "pointercancel"].forEach((eventName) => {
+    miniFastToggle.addEventListener(eventName, () => {
+      miniFastToggle.classList.remove("is-pressed");
+    });
+  });
+
+  miniFastToggle.addEventListener("click", () => {
+    miniFastModeEnabled = !miniFastModeEnabled;
+    updateMiniFastToggleVisual();
+    updateFastModeToolVisual();
+    showFastModeSnackbar();
+    maybeAutoAdvanceAnsweredQuestion();
+  });
+
   miniLearnAll.addEventListener("click", () => {
     document.getElementById("download")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
+  updateMiniFastToggleVisual();
   renderMiniQuestion();
 }
