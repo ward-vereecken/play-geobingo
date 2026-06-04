@@ -244,32 +244,22 @@ if (heroCarouselImage && heroCarouselDots) {
   function setHeroSlide(index) {
     heroCarouselIndex = (index + heroSlides.length) % heroSlides.length;
     const slide = heroSlides[heroCarouselIndex];
+    const preload = new Image();
+    preload.src = slide.image;
 
+    heroCarouselImage.src = slide.image;
+    renderHeroDots();
     heroCarouselImage.animate(
       [
+        { opacity: 0.38, transform: "scale(1.01)" },
         { opacity: 1, transform: "scale(1)" },
-        { opacity: 0.18, transform: "scale(0.988)" },
       ],
       {
-        duration: 190,
-        easing: "ease-in",
+        duration: 260,
+        easing: "ease-out",
         fill: "forwards",
       },
-    ).onfinish = () => {
-      heroCarouselImage.src = slide.image;
-      renderHeroDots();
-      heroCarouselImage.animate(
-        [
-          { opacity: 0.18, transform: "scale(1.014)" },
-          { opacity: 1, transform: "scale(1)" },
-        ],
-        {
-          duration: 290,
-          easing: "ease-out",
-          fill: "forwards",
-        },
-      );
-    };
+    );
   }
 
   function advanceHero(step) {
