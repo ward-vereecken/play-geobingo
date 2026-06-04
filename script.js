@@ -363,13 +363,14 @@ const miniFact = document.getElementById("mini-lesson-fact");
 const miniFactIcon = document.getElementById("mini-lesson-fact-icon");
 const miniFeedback = document.getElementById("mini-lesson-feedback");
 const miniProgress = document.getElementById("mini-lesson-progress");
+const miniProgressFill = document.getElementById("mini-lesson-progress-fill");
 const miniReset = document.getElementById("mini-lesson-reset");
 const miniFastToggle = document.getElementById("mini-lesson-fast-toggle");
 const miniFastToggleIcon = document.getElementById("mini-lesson-fast-toggle-icon");
 const miniNext = document.getElementById("mini-lesson-next");
 const miniLearnAll = document.getElementById("mini-lesson-learn-all");
 
-if (miniTitle && miniLabelIcon && miniMedia && miniInlineTools && miniOptions && miniFact && miniFactIcon && miniFeedback && miniProgress && miniReset && miniFastToggle && miniFastToggleIcon && miniNext && miniLearnAll) {
+if (miniTitle && miniLabelIcon && miniMedia && miniInlineTools && miniOptions && miniFact && miniFactIcon && miniFeedback && miniProgress && miniProgressFill && miniReset && miniFastToggle && miniFastToggleIcon && miniNext && miniLearnAll) {
   let currentQuestionIndex = 0;
   let score = 0;
   let locked = false;
@@ -750,6 +751,14 @@ if (miniTitle && miniLabelIcon && miniMedia && miniInlineTools && miniOptions &&
       const targetFeature = demoWorldGeoJson.features.filter((feature) =>
         sameCountryName(feature?.properties?.name, geoTargetName),
       );
+      const highlightGlowColor = isCapitalMap
+        ? "rgba(127, 204, 255, 0.34)"
+        : "rgba(182, 156, 243, 0.34)";
+      const highlightGlowFill = isCapitalMap
+        ? "rgba(138, 214, 255, 0.26)"
+        : "rgba(201, 181, 247, 0.26)";
+      const highlightCoreBorder = isCapitalMap ? "#4f9ce8" : "#927edb";
+      const highlightCoreFill = isCapitalMap ? "#8fd3ff" : "#c6b6f3";
 
       leafHighlightGlowLayer = L.geoJSON(
         { type: "FeatureCollection", features: targetFeature },
@@ -757,10 +766,10 @@ if (miniTitle && miniLabelIcon && miniMedia && miniInlineTools && miniOptions &&
           pane: "mini-highlight-glow",
           interactive: false,
           style: {
-            color: "rgba(127, 204, 255, 0.34)",
+            color: highlightGlowColor,
             weight: 18,
             opacity: 1,
-            fillColor: "rgba(138, 214, 255, 0.26)",
+            fillColor: highlightGlowFill,
             fillOpacity: 0.95,
             lineJoin: "round",
           },
@@ -773,10 +782,10 @@ if (miniTitle && miniLabelIcon && miniMedia && miniInlineTools && miniOptions &&
           pane: "mini-highlight-core",
           interactive: false,
           style: {
-            color: "#4f9ce8",
+            color: highlightCoreBorder,
             weight: 3,
             opacity: 1,
-            fillColor: "#8fd3ff",
+            fillColor: highlightCoreFill,
             fillOpacity: 0.96,
             lineJoin: "round",
           },
@@ -845,6 +854,7 @@ if (miniTitle && miniLabelIcon && miniMedia && miniInlineTools && miniOptions &&
     miniTitle.classList.remove("fit-one-line");
     miniTitle.textContent = `Demo finished. You got ${score} / ${miniLessonQuestions.length}.`;
     miniProgress.textContent = "";
+    miniProgressFill.style.width = "100%";
     miniOptions.innerHTML = "";
     miniMedia.innerHTML = "";
     miniMedia.classList.add("is-empty");
@@ -885,6 +895,7 @@ if (miniTitle && miniLabelIcon && miniMedia && miniInlineTools && miniOptions &&
     );
     miniTitle.textContent = question.prompt;
     miniProgress.textContent = `${currentQuestionIndex + 1} / ${miniLessonQuestions.length}`;
+    miniProgressFill.style.width = `${((currentQuestionIndex + 1) / miniLessonQuestions.length) * 100}%`;
     if (question.type === "pinpoint") {
       miniFeedback.textContent = "Move around the map and tap the country itself.";
     } else if (question.type === "map") {
