@@ -397,7 +397,6 @@ button {
   width: 70px;
   height: 70px;
   object-fit: contain;
-  align-self: center;
   filter: drop-shadow(0 6px 10px rgba(102, 89, 148, 0.14));
 }
 
@@ -640,6 +639,11 @@ button {
   line-height: 1.02;
 }
 
+.mini-lesson-title.fit-one-line {
+  font-size: clamp(1.16rem, 2.15vw, 1.78rem);
+  white-space: nowrap;
+}
+
 .mini-lesson-media {
   margin: 0 0 16px;
 }
@@ -730,6 +734,7 @@ button {
   width: 16px;
   height: 16px;
   object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .mini-lesson-map .leaflet-control-zoom a {
@@ -882,17 +887,18 @@ button {
 
 .info-card {
   display: grid;
-  grid-template-columns: 62px 1fr;
-  gap: 15px;
-  align-items: start;
+  grid-template-columns: 104px 1fr;
+  gap: 18px;
+  align-items: stretch;
   padding: 18px;
   border-radius: 26px;
 }
 
 .info-card-icon {
-  width: 62px;
-  height: 62px;
-  border-radius: 20px;
+  width: 104px;
+  height: 100%;
+  min-height: 96px;
+  border-radius: 26px;
   display: grid;
   place-items: center;
   background: linear-gradient(180deg, rgba(239, 233, 255, 0.94), rgba(248, 246, 255, 0.96));
@@ -900,8 +906,8 @@ button {
 }
 
 .info-card-icon img {
-  width: 36px;
-  height: 36px;
+  width: 82px;
+  height: 82px;
   object-fit: contain;
 }
 

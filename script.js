@@ -5,8 +5,9 @@ window.addEventListener("load", () => {
 });
 
 const heroCardSnackMessages = [
-  "Love the enthousiasm, but first finish the intro!",
-  "Okay buddy, let's finish the intro first",
+  "Love the enthousiasm, you'll find out more in the app!",
+  "When you download the app, you'll be able to explore all of this!",
+  "Okay buddy, please download the app or try out the demo first",
   "This is getting awkward",
   "Please leave me alone",
   "Okay you win",
@@ -15,10 +16,10 @@ const heroCardSnackMessages = [
   "We can do this all day",
   "This is getting silly",
   "Actually no I haven't got all day bro",
-  "This intro takes 1 minute just please finish it first",
+  "This website takes 1 minute to read please just read it and then decide whether to download or not",
   "I admire the dedication buddy but what are you genuinely trying to prove here",
   "Last warning (not really)",
-  "We're both a couple of taps away from peace. Just do the intro",
+  "We're both a couple of clicks away from peace. Just decide, but please stop this useless clicking",
   "Is this our life now?",
   "Okay, okay, I see you. You actually won.",
   "Kidding lol",
@@ -77,7 +78,7 @@ function showSiteSnackbar(message) {
 
   heroSnackHideTimer = window.setTimeout(() => {
     siteSnackbar.classList.remove("visible", "animating");
-  }, 3000);
+  }, 4300);
 }
 
 function handleHeroCardSnack() {
@@ -329,7 +330,7 @@ const miniLessonQuestions = [
     lessonFamily: "locations",
     prompt: "Pinpoint the United States of America on the map",
     mapTarget: "The United States of America",
-    correctMessage: "The United States spans six time zones and is home to both the Grand Canyon and Silicon Valley.",
+    correctMessage: "the United States is home to the world’s largest economy and the first humans on the Moon.",
   },
   {
     type: "capital_map",
@@ -373,6 +374,8 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
   let leafGeoLayer = null;
   let leafHighlightGlowLayer = null;
   let leafHighlightCoreLayer = null;
+  let leafSuccessGlowLayer = null;
+  let leafSuccessCoreLayer = null;
   let capitalMarkerLayer = null;
   let pinpointAnswered = false;
 
@@ -432,6 +435,18 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
         leafHighlightCoreLayer.remove();
       }
       leafHighlightCoreLayer = null;
+    }
+    if (leafSuccessGlowLayer) {
+      if (typeof leafSuccessGlowLayer.remove === "function") {
+        leafSuccessGlowLayer.remove();
+      }
+      leafSuccessGlowLayer = null;
+    }
+    if (leafSuccessCoreLayer) {
+      if (typeof leafSuccessCoreLayer.remove === "function") {
+        leafSuccessCoreLayer.remove();
+      }
+      leafSuccessCoreLayer = null;
     }
     if (leafGeoLayer) {
       if (typeof leafGeoLayer.remove === "function") {
@@ -495,9 +510,11 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
 
     pinpointAnswered = false;
 
-    if (!isPinpoint) {
+    if (!leafMap.getPane("mini-highlight-glow")) {
       leafMap.createPane("mini-highlight-glow");
       leafMap.getPane("mini-highlight-glow").style.zIndex = "401";
+    }
+    if (!leafMap.getPane("mini-highlight-core")) {
       leafMap.createPane("mini-highlight-core");
       leafMap.getPane("mini-highlight-core").style.zIndex = "402";
     }
@@ -540,10 +557,10 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
                   const otherName = otherLayer.feature?.properties?.name;
                   if (sameCountryName(otherName, geoTargetName)) {
                     otherLayer.setStyle({
-                      color: "#4caf72",
-                      weight: 2,
-                      fillColor: "#80d89f",
-                      fillOpacity: 0.95,
+                      color: "rgba(76, 175, 114, 0)",
+                      weight: 0,
+                      fillColor: "rgba(128, 216, 159, 0)",
+                      fillOpacity: 0,
                     });
                   } else if (sameCountryName(otherName, clickedName) && !sameCountryName(clickedName, geoTargetName)) {
                     otherLayer.setStyle({
@@ -563,6 +580,42 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
                 });
 
                 if (sameCountryName(clickedName, geoTargetName)) {
+                  const successFeature = demoWorldGeoJson.features.filter((countryFeature) =>
+                    sameCountryName(countryFeature?.properties?.name, geoTargetName),
+                  );
+
+                  leafSuccessGlowLayer = L.geoJSON(
+                    { type: "FeatureCollection", features: successFeature },
+                    {
+                      pane: "mini-highlight-glow",
+                      interactive: false,
+                      style: {
+                        color: "rgba(120, 226, 156, 0.34)",
+                        weight: 18,
+                        opacity: 1,
+                        fillColor: "rgba(138, 235, 171, 0.28)",
+                        fillOpacity: 0.95,
+                        lineJoin: "round",
+                      },
+                    },
+                  ).addTo(leafMap);
+
+                  leafSuccessCoreLayer = L.geoJSON(
+                    { type: "FeatureCollection", features: successFeature },
+                    {
+                      pane: "mini-highlight-core",
+                      interactive: false,
+                      style: {
+                        color: "#47b56f",
+                        weight: 3,
+                        opacity: 1,
+                        fillColor: "#86dfa5",
+                        fillOpacity: 0.97,
+                        lineJoin: "round",
+                      },
+                    },
+                  ).addTo(leafMap);
+
                   score += 1;
                   miniFeedback.textContent = question.correctMessage;
                 } else {
@@ -663,6 +716,7 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
   }
 
   function finishMiniLesson() {
+    miniTitle.classList.remove("fit-one-line");
     miniTitle.textContent = `Demo finished. You got ${score} / ${miniLessonQuestions.length}.`;
     miniProgress.textContent = "";
     miniOptions.innerHTML = "";
@@ -691,6 +745,10 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
     setNextEnabled(false);
     setFactVisibility(false);
     updateLessonChrome(question);
+    miniTitle.classList.toggle(
+      "fit-one-line",
+      question.prompt === "Which country does this flag belong to?",
+    );
     miniTitle.textContent = question.prompt;
     miniProgress.textContent = `${currentQuestionIndex + 1} / ${miniLessonQuestions.length}`;
     if (question.type === "pinpoint") {
@@ -772,4 +830,3 @@ if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFe
 
   renderMiniQuestion();
 }
-
