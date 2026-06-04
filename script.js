@@ -1,0 +1,773 @@
+const revealNodes = document.querySelectorAll(".reveal");
+
+window.addEventListener("load", () => {
+  document.body.classList.add("page-ready");
+});
+
+const heroCardSnackMessages = [
+  "Love the enthousiasm, but first finish the intro!",
+  "Okay buddy, let's finish the intro first",
+  "This is getting awkward",
+  "Please leave me alone",
+  "Okay you win",
+  "Kidding, won't be that easy.",
+  "You really like buttons, huh?",
+  "We can do this all day",
+  "This is getting silly",
+  "Actually no I haven't got all day bro",
+  "This intro takes 1 minute just please finish it first",
+  "I admire the dedication buddy but what are you genuinely trying to prove here",
+  "Last warning (not really)",
+  "We're both a couple of taps away from peace. Just do the intro",
+  "Is this our life now?",
+  "Okay, okay, I see you. You actually won.",
+  "Kidding lol",
+  "Okay this is my last one. I'm giving up. The texts will start looping now. Bye.",
+  "Kidding LOLLLLLLLLLLL you really thought",
+  "Okay man you're clinically insane. Get help. I mean it.",
+  "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "OKAY. YOU WIN. HERE. Take this. I'm leaving now. It's been an honour. Goodbye.",
+];
+
+let heroCardSnackCount = 0;
+let heroCardSnackLocked = false;
+let heroSnackHideTimer = null;
+
+const siteSnackbar = document.getElementById("site-snackbar");
+const heroCards = Array.from(document.querySelectorAll(".hero-support-grid .support-card"));
+const featureCards = Array.from(document.querySelectorAll(".feature-grid .feature-card-button"));
+const heroCopy = document.querySelector(".hero-copy");
+const heroVisual = document.querySelector(".hero-visual");
+const heroCarouselShell = document.querySelector(".hero-carousel-shell");
+const ctaReviewAuthor = document.getElementById("cta-review-author");
+const ctaReviewText = document.querySelector(".cta-review p");
+
+const ctaReviews = [
+  {
+    author: "Belgium App Store user",
+    text: "I love love love this! Amazing app to learn new things and geography in a fun way.",
+  },
+  {
+    author: "Cem Noel",
+    text: "Best geography quiz app I’ve ever played! So much to do.",
+  },
+  {
+    author: "Amy",
+    text: "It’s so refreshing to have a well made game that doesn’t flood us with ads.",
+  },
+  {
+    author: "Rafaela Sales",
+    text: "So far the app is great, it’s the Duolingo of geography.",
+  },
+];
+
+function showSiteSnackbar(message) {
+  if (!siteSnackbar) {
+    return;
+  }
+
+  siteSnackbar.textContent = message;
+  siteSnackbar.classList.add("visible");
+
+  if (heroSnackHideTimer) {
+    window.clearTimeout(heroSnackHideTimer);
+  }
+
+  heroSnackHideTimer = window.setTimeout(() => {
+    siteSnackbar.classList.remove("visible");
+  }, 3000);
+}
+
+function handleHeroCardSnack() {
+  heroCardSnackCount += 1;
+
+  let message = "...";
+  if (heroCardSnackLocked || heroCardSnackCount > 22) {
+    heroCardSnackLocked = true;
+    message = "...";
+  } else if (heroCardSnackCount === 22) {
+    heroCardSnackLocked = true;
+    message = heroCardSnackMessages[21];
+  } else {
+    const index = Math.max(0, Math.min(heroCardSnackMessages.length - 1, heroCardSnackCount - 1));
+    message = heroCardSnackMessages[index];
+  }
+
+  showSiteSnackbar(message);
+}
+
+heroCards.forEach((card) => {
+  card.addEventListener("click", handleHeroCardSnack);
+});
+
+featureCards.forEach((node) => {
+  node.addEventListener("click", handleHeroCardSnack);
+});
+
+function syncHeroColumnHeights() {
+  if (!heroCopy || !heroVisual || !heroCarouselShell) {
+    return;
+  }
+
+  if (window.innerWidth <= 1180) {
+    heroVisual.style.height = "";
+    heroCarouselShell.style.height = "";
+    return;
+  }
+
+  const copyHeight = heroCopy.getBoundingClientRect().height;
+  const targetHeight = `${Math.ceil(copyHeight)}px`;
+  heroVisual.style.height = targetHeight;
+  heroCarouselShell.style.height = targetHeight;
+}
+
+window.addEventListener("load", syncHeroColumnHeights);
+window.addEventListener("resize", syncHeroColumnHeights);
+
+if (ctaReviewAuthor && ctaReviewText) {
+  let ctaReviewIndex = 0;
+
+  window.setInterval(() => {
+    ctaReviewIndex = (ctaReviewIndex + 1) % ctaReviews.length;
+    const next = ctaReviews[ctaReviewIndex];
+
+    ctaReviewText.animate(
+      [
+        { opacity: 1, transform: "translateY(0)" },
+        { opacity: 0, transform: "translateY(8px)" },
+      ],
+      {
+        duration: 180,
+        easing: "ease-in",
+        fill: "forwards",
+      },
+    ).onfinish = () => {
+      ctaReviewText.textContent = `“${next.text}”`;
+      ctaReviewAuthor.textContent = next.author;
+      ctaReviewText.animate(
+        [
+          { opacity: 0, transform: "translateY(-8px)" },
+          { opacity: 1, transform: "translateY(0)" },
+        ],
+        {
+          duration: 240,
+          easing: "ease-out",
+          fill: "forwards",
+        },
+      );
+    };
+  }, 4000);
+}
+
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("revealed");
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  },
+  {
+    threshold: 0.16,
+    rootMargin: "0px 0px -40px 0px",
+  },
+);
+
+revealNodes.forEach((node) => revealObserver.observe(node));
+
+const heroCarouselImage = document.getElementById("hero-carousel-image");
+const heroCarouselDots = document.getElementById("hero-carousel-dots");
+const heroPrev = document.getElementById("hero-prev");
+const heroNext = document.getElementById("hero-next");
+
+const heroSlides = [
+  {
+    image: "./assets/screens/news-01.png",
+    caption: "Guided lessons, polished rewards, and a map-first flow all the way through.",
+  },
+  {
+    image: "./assets/screens/news-02.png",
+    caption: "Challenge menus, collections, and progression all keep the app feeling alive.",
+  },
+  {
+    image: "./assets/screens/news-03.png",
+    caption: "Journey and daily systems make the next step feel obvious instead of overwhelming.",
+  },
+  {
+    image: "./assets/screens/news-04.png",
+    caption: "GeoDex and mastery tracking turn progress into something you can actually see.",
+  },
+  {
+    image: "./assets/screens/news-05.png",
+    caption: "Short sessions still feel satisfying because the app wraps them in a bigger loop.",
+  },
+  {
+    image: "./assets/screens/news-06.png",
+    caption: "The UI stays soft and playful without feeling cheap or generic.",
+  },
+  {
+    image: "./assets/screens/news-07.png",
+    caption: "Modes branch outward into flags, maps, trivia, nature, space, and beyond.",
+  },
+  {
+    image: "./assets/screens/news-08.png",
+    caption: "It is built to be pretty, but also to keep you learning for a long time.",
+  },
+];
+
+if (heroCarouselImage && heroCarouselDots) {
+  let heroCarouselIndex = 0;
+  let heroIntervalId = null;
+
+  function renderHeroDots() {
+    heroCarouselDots.innerHTML = "";
+    heroSlides.forEach((_, index) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "hero-dot";
+      dot.setAttribute("aria-label", `Show screenshot ${index + 1}`);
+      if (index === heroCarouselIndex) {
+        dot.classList.add("active");
+      }
+      dot.addEventListener("click", () => {
+        setHeroSlide(index);
+        restartHeroInterval();
+      });
+      heroCarouselDots.appendChild(dot);
+    });
+  }
+
+  function setHeroSlide(index) {
+    heroCarouselIndex = (index + heroSlides.length) % heroSlides.length;
+    const slide = heroSlides[heroCarouselIndex];
+
+    heroCarouselImage.animate(
+      [
+        { opacity: 1, transform: "scale(1)" },
+        { opacity: 0.18, transform: "scale(0.988)" },
+      ],
+      {
+        duration: 190,
+        easing: "ease-in",
+        fill: "forwards",
+      },
+    ).onfinish = () => {
+      heroCarouselImage.src = slide.image;
+      renderHeroDots();
+      heroCarouselImage.animate(
+        [
+          { opacity: 0.18, transform: "scale(1.014)" },
+          { opacity: 1, transform: "scale(1)" },
+        ],
+        {
+          duration: 290,
+          easing: "ease-out",
+          fill: "forwards",
+        },
+      );
+    };
+  }
+
+  function advanceHero(step) {
+    setHeroSlide(heroCarouselIndex + step);
+  }
+
+  function restartHeroInterval() {
+    if (heroIntervalId) {
+      window.clearInterval(heroIntervalId);
+    }
+    heroIntervalId = window.setInterval(() => advanceHero(1), 3300);
+  }
+
+  heroPrev?.addEventListener("click", () => {
+    advanceHero(-1);
+    restartHeroInterval();
+  });
+
+  heroNext?.addEventListener("click", () => {
+    advanceHero(1);
+    restartHeroInterval();
+  });
+
+  renderHeroDots();
+  restartHeroInterval();
+  syncHeroColumnHeights();
+}
+
+const demoWorldGeoJson = window.DEMO_WORLD_GEOJSON || null;
+
+const miniLessonQuestions = [
+  {
+    type: "flag",
+    lessonFamily: "flags",
+    prompt: "Which country does this flag belong to?",
+    media: {
+      type: "flag",
+      src: "./assets/flags/ca.svg",
+      alt: "Canada flag",
+    },
+    options: ["Canada", "The United States", "the United Kingdom", "Australia", "France", "Germany"],
+    answer: "Canada",
+    correctMessage: "Canada chose the maple leaf because it had already been a national symbol for centuries. In 1965, the country adopted this bold design to represent Canada without any colonial emblems.",
+  },
+  {
+    type: "map",
+    lessonFamily: "countries",
+    prompt: "Which country is highlighted?",
+    mapTarget: "France",
+    mapCenter: [46.4, 2.5],
+    mapZoom: 4.4,
+    options: ["France", "Italy", "Germany", "Spain", "Belgium", "Switzerland"],
+    answer: "France",
+    correctMessage: "France is the most visited country in the world and spans 12 time zones because of overseas territories from its colonial past.",
+  },
+  {
+    type: "pinpoint",
+    lessonFamily: "locations",
+    prompt: "Pinpoint the United States of America on the map",
+    mapTarget: "The United States of America",
+    correctMessage: "The United States spans six time zones and is home to both the Grand Canyon and Silicon Valley.",
+  },
+  {
+    type: "capital_map",
+    lessonFamily: "capitals",
+    prompt: "Which is the capital of Japan?",
+    mapTarget: "Japan",
+    mapCenter: [36.2, 138.3],
+    mapZoom: 4.2,
+    capitalMarker: [35.6762, 139.6503],
+    options: ["Tokyo", "Seoul", "Beijing", "Bangkok", "Taipei", "Manila"],
+    answer: "Tokyo",
+    correctMessage: "Tokyo is the most populous metropolitan area in the world.",
+  },
+  {
+    type: "trivia",
+    lessonFamily: "trivia",
+    prompt: "Which country has the most time zones including overseas territories?",
+    options: ["Russia", "USA", "France", "China"],
+    answer: "France",
+    correctMessage: "France spans 12 time zones due to its overseas departments and territories.",
+  },
+];
+
+const miniTitle = document.getElementById("mini-lesson-title");
+const miniLabelIcon = document.getElementById("mini-lesson-label-icon");
+const miniMedia = document.getElementById("mini-lesson-media");
+const miniOptions = document.getElementById("mini-lesson-options");
+const miniFact = document.getElementById("mini-lesson-fact");
+const miniFeedback = document.getElementById("mini-lesson-feedback");
+const miniProgress = document.getElementById("mini-lesson-progress");
+const miniReset = document.getElementById("mini-lesson-reset");
+const miniNext = document.getElementById("mini-lesson-next");
+const miniLearnAll = document.getElementById("mini-lesson-learn-all");
+
+if (miniTitle && miniLabelIcon && miniMedia && miniOptions && miniFact && miniFeedback && miniProgress && miniReset && miniNext && miniLearnAll) {
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let locked = false;
+  let answeredCurrentQuestion = false;
+  let leafMap = null;
+  let leafGeoLayer = null;
+  let leafHighlightGlowLayer = null;
+  let leafHighlightCoreLayer = null;
+  let capitalMarkerLayer = null;
+  let pinpointAnswered = false;
+
+  const lessonTypeMeta = {
+    flags: {
+      icon: "./assets/icons/flags2.webp",
+      cta: "Learn all flags",
+    },
+    countries: {
+      icon: "./assets/icons/identify1.webp",
+      cta: "Learn all countries",
+    },
+    locations: {
+      icon: "./assets/icons/pinpoint2.webp",
+      cta: "Learn all locations",
+    },
+    capitals: {
+      icon: "./assets/icons/capital1.webp",
+      cta: "Learn all capitals",
+    },
+    trivia: {
+      icon: "./assets/icons/globe1.webp",
+      cta: "Learn all trivia",
+    },
+  };
+
+  function setNextEnabled(enabled) {
+    answeredCurrentQuestion = enabled;
+    miniNext.disabled = !enabled;
+  }
+
+  function updateLessonChrome(question) {
+    const meta = lessonTypeMeta[question.lessonFamily] || lessonTypeMeta.countries;
+    miniLabelIcon.src = meta.icon;
+    miniLearnAll.textContent = meta.cta;
+  }
+
+  function setFactVisibility(visible) {
+    miniFact.classList.toggle("is-hidden", !visible);
+  }
+
+  function teardownLeafletMap() {
+    if (capitalMarkerLayer) {
+      if (typeof capitalMarkerLayer.remove === "function") {
+        capitalMarkerLayer.remove();
+      }
+      capitalMarkerLayer = null;
+    }
+    if (leafHighlightGlowLayer) {
+      if (typeof leafHighlightGlowLayer.remove === "function") {
+        leafHighlightGlowLayer.remove();
+      }
+      leafHighlightGlowLayer = null;
+    }
+    if (leafHighlightCoreLayer) {
+      if (typeof leafHighlightCoreLayer.remove === "function") {
+        leafHighlightCoreLayer.remove();
+      }
+      leafHighlightCoreLayer = null;
+    }
+    if (leafGeoLayer) {
+      if (typeof leafGeoLayer.remove === "function") {
+        leafGeoLayer.remove();
+      }
+      leafGeoLayer = null;
+    }
+    if (leafMap) {
+      leafMap.remove();
+      leafMap = null;
+    }
+  }
+
+  function normalizeMapTarget(targetName) {
+    if (targetName === "The United States" || targetName === "The United States of America") {
+      return "the United States of America";
+    }
+    return targetName;
+  }
+
+  function sameCountryName(a, b) {
+    return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
+  }
+
+  function renderLeafletMap(question) {
+    if (!miniMedia || !window.L || !demoWorldGeoJson) {
+      miniMedia.innerHTML = '<div class="mini-lesson-map-shell"><div class="mini-map-caption">Map preview unavailable here.</div></div>';
+      return;
+    }
+
+    const targetName = question.mapTarget;
+    const geoTargetName = normalizeMapTarget(targetName);
+    const isPinpoint = question.type === "pinpoint";
+    const isCapitalMap = question.type === "capital_map";
+
+    miniMedia.innerHTML = `
+      <div class="mini-lesson-map-shell">
+        <div class="mini-lesson-map" id="mini-lesson-map-canvas"></div>
+        <div class="mini-map-caption">${isPinpoint ? "Move around the real map and tap the country itself." : isCapitalMap ? "Japan is highlighted, and Tokyo is marked on the map." : "Pan and zoom the real world map while the answer stays highlighted."}</div>
+      </div>
+    `;
+
+    const mapNode = document.getElementById("mini-lesson-map-canvas");
+    if (!mapNode) return;
+
+    teardownLeafletMap();
+
+    leafMap = L.map(mapNode, {
+      zoomControl: true,
+      attributionControl: false,
+      worldCopyJump: true,
+      preferCanvas: true,
+    }).setView(question.mapCenter || [22, 10], question.mapZoom || 2);
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
+      subdomains: "abcd",
+      maxZoom: 6,
+      minZoom: 1,
+      attribution: "&copy; OpenStreetMap &copy; CARTO",
+    }).addTo(leafMap);
+
+    pinpointAnswered = false;
+
+    if (!isPinpoint) {
+      leafMap.createPane("mini-highlight-glow");
+      leafMap.getPane("mini-highlight-glow").style.zIndex = "401";
+      leafMap.createPane("mini-highlight-core");
+      leafMap.getPane("mini-highlight-core").style.zIndex = "402";
+    }
+
+    leafGeoLayer = L.geoJSON(demoWorldGeoJson, {
+      style: (feature) => {
+        const name = feature?.properties?.name;
+        return {
+          color: "rgba(118, 103, 173, 0.34)",
+          weight: 1,
+          fillColor: "rgba(255,255,255,0.80)",
+          fillOpacity: 0.8,
+        };
+      },
+      interactive: isPinpoint,
+      onEachFeature: isPinpoint
+        ? (feature, layer) => {
+            layer.on({
+              mouseover: () => {
+                if (!pinpointAnswered) {
+                  layer.setStyle({
+                    fillColor: "#daccff",
+                    fillOpacity: 0.92,
+                  });
+                }
+              },
+              mouseout: () => {
+                if (!pinpointAnswered) {
+                  leafGeoLayer.resetStyle(layer);
+                }
+              },
+              click: () => {
+                if (locked || pinpointAnswered) {
+                  return;
+                }
+                pinpointAnswered = true;
+                locked = true;
+                const clickedName = feature?.properties?.name;
+                leafGeoLayer.eachLayer((otherLayer) => {
+                  const otherName = otherLayer.feature?.properties?.name;
+                  if (sameCountryName(otherName, geoTargetName)) {
+                    otherLayer.setStyle({
+                      color: "#4caf72",
+                      weight: 2,
+                      fillColor: "#80d89f",
+                      fillOpacity: 0.95,
+                    });
+                  } else if (sameCountryName(otherName, clickedName) && !sameCountryName(clickedName, geoTargetName)) {
+                    otherLayer.setStyle({
+                      color: "#dd6c82",
+                      weight: 2,
+                      fillColor: "#ffb3c0",
+                      fillOpacity: 0.95,
+                    });
+                  } else {
+                    otherLayer.setStyle({
+                      color: "rgba(118, 103, 173, 0.26)",
+                      weight: 1,
+                      fillColor: "rgba(255,255,255,0.54)",
+                      fillOpacity: 0.6,
+                    });
+                  }
+                });
+
+                if (sameCountryName(clickedName, geoTargetName)) {
+                  score += 1;
+                  miniFeedback.textContent = question.correctMessage;
+                } else {
+                  miniFeedback.textContent = `Not quite. That was ${clickedName}. The correct answer is ${targetName}.`;
+                }
+
+                setFactVisibility(true);
+                setNextEnabled(true);
+              },
+            });
+          }
+        : undefined,
+    }).addTo(leafMap);
+
+    if (!isPinpoint) {
+      const targetFeature = demoWorldGeoJson.features.filter((feature) =>
+        sameCountryName(feature?.properties?.name, geoTargetName),
+      );
+
+      leafHighlightGlowLayer = L.geoJSON(
+        { type: "FeatureCollection", features: targetFeature },
+        {
+          pane: "mini-highlight-glow",
+          interactive: false,
+          style: {
+            color: "rgba(127, 204, 255, 0.34)",
+            weight: 18,
+            opacity: 1,
+            fillColor: "rgba(138, 214, 255, 0.26)",
+            fillOpacity: 0.95,
+            lineJoin: "round",
+          },
+        },
+      ).addTo(leafMap);
+
+      leafHighlightCoreLayer = L.geoJSON(
+        { type: "FeatureCollection", features: targetFeature },
+        {
+          pane: "mini-highlight-core",
+          interactive: false,
+          style: {
+            color: "#4f9ce8",
+            weight: 3,
+            opacity: 1,
+            fillColor: "#8fd3ff",
+            fillOpacity: 0.96,
+            lineJoin: "round",
+          },
+        },
+      ).addTo(leafMap);
+    }
+
+    if (isCapitalMap && Array.isArray(question.capitalMarker)) {
+      L.circleMarker(question.capitalMarker, {
+        radius: 16,
+        color: "rgba(91, 146, 221, 0.24)",
+        weight: 6,
+        fillOpacity: 0,
+      }).addTo(leafMap);
+
+      capitalMarkerLayer = L.marker(question.capitalMarker, {
+        interactive: false,
+        icon: L.divIcon({
+          className: "",
+          html: '<div class="mini-capital-marker"><img src="./assets/icons/capital1.webp" alt="" /></div>',
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+        }),
+      }).addTo(leafMap);
+    }
+  }
+
+  function renderMiniMedia(question) {
+    miniMedia.innerHTML = "";
+
+    if (question.type === "flag" && question.media?.src) {
+      miniMedia.classList.remove("is-empty");
+      miniMedia.innerHTML = `
+        <div class="mini-lesson-flag-shell">
+          <div class="mini-lesson-flag-card">
+            <div class="mini-lesson-flag-card-inner">
+              <img class="mini-lesson-flag-image" src="${question.media.src}" alt="${question.media.alt || ""}" />
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    if (question.type === "map" || question.type === "pinpoint" || question.type === "capital_map") {
+      miniMedia.classList.remove("is-empty");
+      renderLeafletMap(question);
+      return;
+    }
+
+    miniMedia.classList.add("is-empty");
+    teardownLeafletMap();
+  }
+
+  function finishMiniLesson() {
+    miniTitle.textContent = `Demo finished. You got ${score} / ${miniLessonQuestions.length}.`;
+    miniProgress.textContent = "";
+    miniOptions.innerHTML = "";
+    miniMedia.innerHTML = "";
+    miniMedia.classList.add("is-empty");
+    teardownLeafletMap();
+    miniFeedback.textContent = "That was only a tiny sample. The real app goes much deeper.";
+    miniLearnAll.textContent = "Learn the world";
+    setFactVisibility(true);
+    miniNext.disabled = true;
+  }
+
+  function goToNextQuestion() {
+    currentQuestionIndex += 1;
+    if (currentQuestionIndex >= miniLessonQuestions.length) {
+      finishMiniLesson();
+      return;
+    }
+    renderMiniQuestion();
+  }
+
+  function renderMiniQuestion() {
+    const question = miniLessonQuestions[currentQuestionIndex];
+    locked = false;
+    pinpointAnswered = false;
+    setNextEnabled(false);
+    setFactVisibility(false);
+    updateLessonChrome(question);
+    miniTitle.textContent = question.prompt;
+    miniProgress.textContent = `${currentQuestionIndex + 1} / ${miniLessonQuestions.length}`;
+    if (question.type === "pinpoint") {
+      miniFeedback.textContent = "Move around the map and tap the country itself.";
+    } else if (question.type === "map") {
+      miniFeedback.textContent = "Move around the map if you want, then choose from the answers below.";
+    } else if (question.type === "capital_map") {
+      miniFeedback.textContent = "Use the map clues, then choose from the cities below.";
+    } else {
+      miniFeedback.textContent = "Choose an answer.";
+    }
+    miniOptions.innerHTML = "";
+    renderMiniMedia(question);
+
+    if (!question.options) {
+      return;
+    }
+
+    question.options.forEach((option) => {
+      const button = document.createElement("button");
+      button.className = "mini-lesson-option";
+      button.textContent = option;
+      button.type = "button";
+      button.addEventListener("click", () => handleMiniAnswer(button, option));
+      miniOptions.appendChild(button);
+    });
+  }
+
+  function handleMiniAnswer(button, option) {
+    if (locked) {
+      return;
+    }
+
+    locked = true;
+    const question = miniLessonQuestions[currentQuestionIndex];
+    const optionButtons = Array.from(miniOptions.querySelectorAll(".mini-lesson-option"));
+
+    optionButtons.forEach((node) => {
+      node.classList.add("disabled");
+      if (node.textContent === question.answer) {
+        node.classList.add("correct");
+      }
+    });
+
+    if (option === question.answer) {
+      score += 1;
+      miniFeedback.textContent = question.correctMessage;
+    } else {
+      button.classList.add("incorrect");
+      miniFeedback.textContent = `Not quite. The correct answer is ${question.answer}.`;
+    }
+
+    setFactVisibility(true);
+    setNextEnabled(true);
+  }
+
+  miniNext.addEventListener("click", () => {
+    if (!answeredCurrentQuestion) {
+      return;
+    }
+    goToNextQuestion();
+  });
+
+  miniReset.addEventListener("click", () => {
+    currentQuestionIndex = 0;
+    score = 0;
+    locked = false;
+    setNextEnabled(false);
+    setFactVisibility(false);
+    miniMedia.innerHTML = "";
+    miniMedia.classList.add("is-empty");
+    teardownLeafletMap();
+    renderMiniQuestion();
+  });
+
+  miniLearnAll.addEventListener("click", () => {
+    document.getElementById("download")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  renderMiniQuestion();
+}
+

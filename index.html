@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GeoBingo | Beautiful Geography Lessons</title>
+    <meta
+      name="description"
+      content="GeoBingo is a polished geography app with daily lessons, guided journey progression, challenge runs, GeoDex mastery tracking, streaks, widgets, multiplayer, and map-based learning."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <div class="ambient ambient-a"></div>
+      <div class="ambient ambient-b"></div>
+      <div class="ambient ambient-c"></div>
+
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="GeoBingo">
+          <img
+            class="brand-mark"
+            src="./assets/icons/GeoBingoLogo_transparant.webp"
+            alt="GeoBingo"
+          />
+        </a>
+
+        <nav class="topnav">
+          <a href="#demo">Demo</a>
+          <a href="#learn">Lessons</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#download">Download</a>
+        </nav>
+
+        <a class="button button-store button-small" href="#download">
+          Get the app
+        </a>
+      </header>
+
+      <main id="top">
+        <section class="hero">
+          <div class="hero-copy reveal">
+            <h1>
+              Learn the world <span>by playing.</span>
+            </h1>
+            <p class="hero-body">
+              Short daily lessons that help you learn the whole world over time.
+            </p>
+
+            <div class="cta-row">
+              <a
+                class="button button-store"
+                href="https://apps.apple.com/us/app/geobingo-geography-quiz/id6758577949"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span class="store-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M15.11 1.7c.08 1.02-.3 2.02-.99 2.73-.73.78-1.93 1.37-2.96 1.29-.12-.98.35-2.03 1.03-2.74.76-.79 2.01-1.35 2.92-1.28Zm3.55 15.68c-.49 1.12-.72 1.61-1.35 2.58-.87 1.36-2.1 3.05-3.63 3.06-1.36.01-1.71-.88-3.56-.87-1.85.01-2.23.88-3.59.87-1.53-.01-2.69-1.54-3.56-2.89C.53 17.08-.7 11.53 1.48 8.17 2.57 6.48 4.28 5.49 5.88 5.49c1.63 0 2.66.9 4 .9 1.3 0 2.09-.9 3.99-.9 1.43 0 2.94.78 4.03 2.12-3.55 1.95-2.98 7.03.76 8.77Z"
+                    />
+                  </svg>
+                </span>
+                <span>
+                  <strong>Download on the</strong>
+                  App Store
+                </span>
+              </a>
+              <a
+                class="button button-store"
+                href="https://play.google.com/store/apps/details?id=com.wardvereecken.geobingo&hl=en"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span class="store-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4.72 3.5 15.9 12 4.72 20.5A1.2 1.2 0 0 1 4 19.42V4.58c0-.46.27-.87.72-1.08Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M18.57 9.83 6.8 2.92a1.33 1.33 0 0 0-1.4.04L15.9 12l2.67-2.17Z"
+                      fill="currentColor"
+                      opacity=".82"
+                    />
+                    <path
+                      d="m18.57 14.17-2.67-2.17L5.4 21.04c.4.27.92.3 1.4.04l11.77-6.91Z"
+                      fill="currentColor"
+                      opacity=".68"
+                    />
+                    <path
+                      d="M20.25 11.1c.99.57.99 1.23 0 1.8l-1.68.97L15.9 12l2.67-2.17 1.68.97Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+                <span>
+                  <strong>Get it on</strong>
+                  Google Play
+                </span>
+              </a>
+            </div>
+
+            <div class="hero-support-grid">
+              <button class="support-card" type="button">
+                <img src="./assets/icons/sextant1.webp" alt="" />
+                <div>
+                  <h3>Journey mode</h3>
+                  <p>Let the app guide your progression.</p>
+                </div>
+              </button>
+              <button class="support-card" type="button">
+                <img src="./assets/icons/streak_3_trans.webp" alt="" />
+                <div>
+                  <h3>Streaks</h3>
+                  <p>Keep momentum with daily goals and rank climbs.</p>
+                </div>
+              </button>
+              <button class="support-card" type="button">
+                <img src="./assets/icons/geodex1.webp" alt="" />
+                <div>
+                  <h3>GeoDex</h3>
+                  <p>See what you have learned for every country.</p>
+                </div>
+              </button>
+              <button class="support-card support-card-lesson-types" type="button">
+                <img src="./assets/icons/all_lessons1.webp" alt="" />
+                <div>
+                  <h3>10+ lesson types</h3>
+                  <p>From countries and flags to nature, space, currencies, and more.</p>
+                </div>
+              </button>
+              <button class="support-card" type="button">
+                <img src="./assets/icons/redeem2.webp" alt="" />
+                <div>
+                  <h3>Smart learning</h3>
+                  <p>Revision lessons and past mistakes help weak spots stick.</p>
+                </div>
+              </button>
+              <button class="support-card" type="button">
+                <img src="./assets/icons/gauntlet_icon.webp" alt="" />
+                <div>
+                  <h3>Challenges</h3>
+                  <p>Take on gauntlets, collections, and special challenge runs.</p>
+                </div>
+              </button>
+              <button class="support-card" type="button">
+                <img src="./assets/icons/versus1.webp" alt="" />
+                <div>
+                  <h3>Multiplayer</h3>
+                  <p>Challenge friends and turn geography into real competition.</p>
+                </div>
+              </button>
+              <button class="support-card" type="button">
+                <img src="./assets/icons/compass3.webp" alt="" />
+                <div>
+                  <h3>Explore mode</h3>
+                  <p>Wander the map, tap countries, and discover the world more freely.</p>
+                </div>
+              </button>
+            </div>
+
+            <a class="button button-quiet button-demo-jump" href="#demo">
+              <span>Try a demo below</span>
+              <span class="demo-arrow" aria-hidden="true">&#8595;</span>
+            </a>
+          </div>
+
+          <div class="hero-visual reveal">
+            <div class="hero-carousel-shell">
+              <div class="hero-phone-frame">
+                <img
+                  class="hero-carousel-image"
+                  id="hero-carousel-image"
+                  src="./assets/screens/news-01.png"
+                  alt="GeoBingo app screenshot"
+                />
+              </div>
+
+              <div class="hero-carousel-footer">
+                <div class="hero-carousel-dots" id="hero-carousel-dots"></div>
+              </div>
+              <div class="hero-carousel-controls-bar">
+                <button
+                  class="hero-arrow"
+                  id="hero-prev"
+                  type="button"
+                  aria-label="Previous screenshot"
+                >
+                  &#8249;
+                </button>
+                <button
+                  class="hero-arrow"
+                  id="hero-next"
+                  type="button"
+                  aria-label="Next screenshot"
+                >
+                  &#8250;
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section demo-section" id="demo">
+          <div class="section-heading section-heading-wide reveal">
+            <div class="eyebrow">Try the feel</div>
+            <h2>Play a tiny five-question lesson right here.</h2>
+            <p>
+              The real app goes much deeper, but this gives a quick feel for the
+              clean pacing, quick feedback, and breezy lesson rhythm.
+            </p>
+          </div>
+
+          <div class="demo-layout">
+            <div class="mini-lesson-card reveal">
+              <div class="mini-lesson-top">
+                <div class="mini-lesson-label">
+                  <img id="mini-lesson-label-icon" src="./assets/icons/identify1.webp" alt="" />
+                  <span>Playable mini lesson</span>
+                </div>
+                <button class="button button-quiet mini-reset mini-reset-top" id="mini-lesson-reset">
+                  Restart demo
+                </button>
+                <div class="mini-lesson-progress" id="mini-lesson-progress">
+                  1 / 5
+                </div>
+              </div>
+
+              <h3 class="mini-lesson-title" id="mini-lesson-title">
+                Which country uses the maple leaf flag?
+              </h3>
+
+              <div class="mini-lesson-media is-empty" id="mini-lesson-media"></div>
+
+              <div class="mini-lesson-options" id="mini-lesson-options"></div>
+
+              <div class="mini-lesson-footer">
+                <div class="mini-lesson-fact is-hidden" id="mini-lesson-fact">
+                  <img src="./assets/icons/light1.webp" alt="" />
+                  <div class="mini-lesson-feedback" id="mini-lesson-feedback">
+                    Try a tiny five-question sample.
+                  </div>
+                </div>
+                <div class="mini-lesson-actions">
+                  <button class="button button-store mini-next" id="mini-lesson-next" disabled>
+                    Next
+                  </button>
+                </div>
+              </div>
+
+              <div class="mini-lesson-bottom-cta">
+                <button class="button button-quiet mini-learn-all" id="mini-lesson-learn-all">
+                  Learn all countries
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-copy reveal">
+              <article class="info-card">
+                <div class="info-card-icon">
+                  <img src="./assets/icons/daily1.webp" alt="" />
+                </div>
+                <div>
+                  <h3>Short lessons, real systems</h3>
+                  <p>
+                    The lessons are quick, but around them sits a full loop of
+                    daily rewards, journey progression, retries, revision,
+                    redemption, streaks, collections, and rankings.
+                  </p>
+                </div>
+              </article>
+
+              <article class="info-card">
+                <div class="info-card-icon">
+                  <img src="./assets/icons/explored1.webp" alt="" />
+                </div>
+                <div>
+                  <h3>Learn on the actual map</h3>
+                  <p>
+                    GeoBingo is built around maps, regions, borders, and
+                    placement. It feels closer to building a mental atlas than
+                    memorizing flashcards.
+                  </p>
+                </div>
+              </article>
+
+              <article class="info-card">
+                <div class="info-card-icon">
+                  <img src="./assets/icons/geodex1.webp" alt="" />
+                </div>
+                <div>
+                  <h3>Progress gets visual</h3>
+                  <p>
+                    The GeoDex, streak systems, challenge menus, and widgets all
+                    make your learning progress feel visible and alive.
+                  </p>
+                </div>
+              </article>
+
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="learn">
+          <div class="section-heading section-heading-wide reveal">
+            <div class="eyebrow">What you can learn</div>
+            <h2>A lot more than flags and capitals.</h2>
+            <p>
+              GeoBingo keeps branching outward, with each lesson type getting
+              its own look, rhythm, and challenge style.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/identify1.webp" alt="" />
+              </div>
+              <h3>Countries</h3>
+              <p>Recognize countries by shape, region, and borders.</p>
+            </button>
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/flags2.webp" alt="" />
+              </div>
+              <h3>Flags</h3>
+              <p>Build fast flag recognition without cheap option padding.</p>
+            </button>
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/pinpoint2.webp" alt="" />
+              </div>
+              <h3>Pinpoint</h3>
+              <p>Move from vague familiarity to real map precision.</p>
+            </button>
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/capital1.webp" alt="" />
+              </div>
+              <h3>Capitals</h3>
+              <p>Learn capitals on the map instead of as detached trivia.</p>
+            </button>
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/languages3.webp" alt="" />
+              </div>
+              <h3>Languages</h3>
+              <p>Place languages geographically and connect them to countries.</p>
+            </button>
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/currency4.webp" alt="" />
+              </div>
+              <h3>Currencies</h3>
+              <p>Learn the world’s currencies through elegant map prompts.</p>
+            </button>
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/globe1.webp" alt="" />
+              </div>
+              <h3>Trivia</h3>
+              <p>World facts that still feel playful, fair, and memorable.</p>
+            </button>
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/explored1.webp" alt="" />
+              </div>
+              <h3>Explore</h3>
+              <p>Wander the world map and discover countries more immersively.</p>
+            </button>
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/nature1.webp" alt="" />
+              </div>
+              <h3>Nature</h3>
+              <p>Rivers, mountains, seas, deserts, and natural geography.</p>
+            </button>
+            <button class="feature-card feature-card-button reveal" type="button">
+              <div class="feature-icon">
+                <img src="./assets/icons/cosmography.webp" alt="" />
+              </div>
+              <h3>Space</h3>
+              <p>Planets, moons, constellations, and a full extra branch to master.</p>
+            </button>
+          </div>
+        </section>
+
+        <section class="section reviews-section" id="reviews">
+          <div class="section-heading section-heading-wide reveal">
+            <h2>What players are saying</h2>
+          </div>
+
+          <div class="reviews-grid" id="reviews-grid">
+            <article class="review-card review-card-featured reveal">
+              <div class="review-stars">★★★★★</div>
+              <h3>“Best geography quiz app I’ve ever played.”</h3>
+              <p>
+                “There are so many features I like about it, I can’t list them all…
+                redemption for mistakes, rankings, customization, fun facts, explore
+                mode, and quizzes that actually force you to learn.”
+              </p>
+              <span class="review-meta">Cem Noel · Mar 25, 2026</span>
+            </article>
+
+            <article class="review-card reveal">
+              <div class="review-stars">★★★★★</div>
+              <p>
+                “A great app for learning all about world geography while having fun.”
+              </p>
+              <span class="review-meta">Alexia Augras · Jun 3, 2026</span>
+            </article>
+
+            <article class="review-card reveal">
+              <div class="review-stars">★★★★★</div>
+              <p>
+                “So far the app is great, it’s the Duolingo of geography.”
+              </p>
+              <span class="review-meta">Rafaela Sales · May 15, 2026</span>
+            </article>
+
+            <article class="review-card reveal">
+              <div class="review-stars">★★★★★</div>
+              <p>
+                “It’s so refreshing to have a well made game that doesn’t flood us with ads.”
+              </p>
+              <span class="review-meta">Amy · Apr 30, 2026</span>
+            </article>
+
+            <article class="review-card reveal review-card-hidden">
+              <div class="review-stars">★★★★★</div>
+              <p>
+                “What a cool way to expand your Geography knowledge… fun and educational
+                facts, and you learn really fast!”
+              </p>
+              <span class="review-meta">Kristien Beke · May 3, 2026</span>
+            </article>
+
+            <article class="review-card reveal review-card-hidden">
+              <div class="review-stars">★★★★★</div>
+              <p>
+                “Fun and has more to it than expected.”
+              </p>
+              <span class="review-meta">Fazz Coding · Apr 22, 2026</span>
+            </article>
+
+            <article class="review-card reveal review-card-hidden">
+              <div class="review-stars">★★★★★</div>
+              <p>
+                “Exceptionally well-designed and educational geography app!”
+              </p>
+              <span class="review-meta">Bauke · Mar 22, 2026</span>
+            </article>
+          </div>
+          <div class="reviews-more-note reveal">
+            <p>More reviews on the app stores.</p>
+          </div>
+        </section>
+
+        <section class="section final-cta" id="download">
+          <div class="final-cta-panel reveal">
+            <div class="final-copy">
+              <div class="eyebrow">Ready to explore?</div>
+              <h2><span>Download GeoBingo</span><br />learn the world.</h2>
+              <p>
+                Available on iPhone and Android. Short lessons, polished progression,
+                daily rhythm, and a whole lot of world knowledge.
+              </p>
+
+              <blockquote class="cta-review">
+                <div class="review-stars">★★★★★</div>
+                <p>
+                  “I love love love this! Amazing app to learn new things and geography
+                  in a fun way.”
+                </p>
+                <span id="cta-review-author">Belgium App Store user</span>
+              </blockquote>
+
+              <div class="cta-row">
+                <a
+                  class="button button-store"
+                  href="https://apps.apple.com/us/app/geobingo-geography-quiz/id6758577949"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span class="store-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M15.11 1.7c.08 1.02-.3 2.02-.99 2.73-.73.78-1.93 1.37-2.96 1.29-.12-.98.35-2.03 1.03-2.74.76-.79 2.01-1.35 2.92-1.28Zm3.55 15.68c-.49 1.12-.72 1.61-1.35 2.58-.87 1.36-2.1 3.05-3.63 3.06-1.36.01-1.71-.88-3.56-.87-1.85.01-2.23.88-3.59.87-1.53-.01-2.69-1.54-3.56-2.89C.53 17.08-.7 11.53 1.48 8.17 2.57 6.48 4.28 5.49 5.88 5.49c1.63 0 2.66.9 4 .9 1.3 0 2.09-.9 3.99-.9 1.43 0 2.94.78 4.03 2.12-3.55 1.95-2.98 7.03.76 8.77Z"
+                      />
+                    </svg>
+                  </span>
+                  <span>
+                    <strong>Download on the</strong>
+                    App Store
+                  </span>
+                </a>
+                <a
+                  class="button button-store"
+                  href="https://play.google.com/store/apps/details?id=com.wardvereecken.geobingo&hl=en"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span class="store-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4.72 3.5 15.9 12 4.72 20.5A1.2 1.2 0 0 1 4 19.42V4.58c0-.46.27-.87.72-1.08Z"
+                        fill="currentColor"
+                      />
+                      <path
+                        d="M18.57 9.83 6.8 2.92a1.33 1.33 0 0 0-1.4.04L15.9 12l2.67-2.17Z"
+                        fill="currentColor"
+                        opacity=".82"
+                      />
+                      <path
+                        d="m18.57 14.17-2.67-2.17L5.4 21.04c.4.27.92.3 1.4.04l11.77-6.91Z"
+                        fill="currentColor"
+                        opacity=".68"
+                      />
+                      <path
+                        d="M20.25 11.1c.99.57.99 1.23 0 1.8l-1.68.97L15.9 12l2.67-2.17 1.68.97Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </span>
+                  <span>
+                    <strong>Get it on</strong>
+                    Google Play
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer-left">
+          <img
+            src="./assets/icons/GeoBingoLogo_transparant.webp"
+            alt=""
+            aria-hidden="true"
+          />
+          <span>GeoBingo</span>
+        </div>
+        <p>Designed and developed by <strong>Ward Vereecken</strong></p>
+      </footer>
+
+      <div class="site-snackbar" id="site-snackbar" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <script src="./assets/data/demo-world-geojson.js"></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
