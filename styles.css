@@ -151,6 +151,13 @@ button {
   max-width: 620px;
 }
 
+.join-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
 .join-eyebrow {
   color: var(--primary-strong);
   font-weight: 800;
@@ -293,6 +300,7 @@ button {
 .hero-copy,
 .hero-visual {
   width: 100%;
+  min-width: 0;
 }
 
 .hero-copy {
@@ -622,6 +630,7 @@ button {
 .final-cta-panel {
   display: grid;
   gap: 24px;
+  min-width: 0;
 }
 
 .demo-layout {
@@ -636,6 +645,8 @@ button {
 
 .mini-lesson-card {
   padding: 22px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .mini-lesson-top {
@@ -1131,6 +1142,7 @@ button {
 .demo-copy {
   display: grid;
   gap: 16px;
+  min-width: 0;
 }
 
 .info-card {
@@ -1140,6 +1152,7 @@ button {
   align-items: stretch;
   padding: 18px;
   border-radius: 26px;
+  min-width: 0;
 }
 
 .info-card-icon {
@@ -1725,6 +1738,11 @@ body.page-ready .hero-support-grid .support-card:nth-child(8) {
     text-align: center;
   }
 
+  .join-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
   .topnav {
     order: 3;
     width: 100%;
@@ -1758,6 +1776,159 @@ body.page-ready .hero-support-grid .support-card:nth-child(8) {
   .section,
   .footer {
     width: min(calc(100% - 20px), var(--site-width));
+  }
+
+  .topbar {
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .brand {
+    padding: 5px;
+    border-radius: 14px;
+  }
+
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .topbar .button-small {
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+
+  .topnav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: 5px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+  }
+
+  .topnav a {
+    padding: 10px 4px;
+    min-width: 0;
+    text-align: center;
+    border-radius: 11px;
+    white-space: nowrap;
+  }
+
+  .join-banner {
+    width: min(calc(100% - 20px), var(--site-width));
+    padding: 16px 14px;
+    margin-top: 12px;
+  }
+
+  .join-banner h2 {
+    font-size: 1.5rem;
+  }
+
+  .join-banner p {
+    font-size: 0.94rem;
+    line-height: 1.45;
+  }
+
+  .join-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .join-actions .button {
+    width: 100%;
+    padding: 13px 10px;
+  }
+
+  .hero {
+    margin-top: 12px;
+    padding-top: 14px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.2rem, 12vw, 3.1rem);
+    letter-spacing: 0;
+  }
+
+  .section {
+    padding: 36px 0;
+  }
+
+  .section h2 {
+    font-size: clamp(1.78rem, 9vw, 2.5rem);
+    line-height: 1.02;
+    letter-spacing: 0;
+  }
+
+  .mini-lesson-card {
+    padding: 15px;
+    border-radius: 24px;
+  }
+
+  .mini-lesson-title,
+  .mini-lesson-title.fit-one-line {
+    font-size: clamp(1.34rem, 7.5vw, 1.86rem);
+    white-space: normal;
+  }
+
+  .mini-lesson-top {
+    gap: 10px;
+  }
+
+  .mini-lesson-label {
+    max-width: 100%;
+    padding: 9px 11px;
+    font-size: 0.84rem;
+  }
+
+  .mini-reset-top {
+    padding: 10px 12px;
+    font-size: 0.84rem;
+  }
+
+  .mini-lesson-map-shell {
+    padding: 10px;
+    border-radius: 20px;
+  }
+
+  .mini-lesson-map {
+    height: 230px;
+    border-radius: 15px;
+  }
+
+  .mini-map-tool-panel {
+    top: 20px;
+    right: 20px;
+  }
+
+  .info-card {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .info-card-icon {
+    width: 72px;
+    min-height: 72px;
+    border-radius: 20px;
+  }
+
+  .info-card-icon img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .info-card h3 {
+    font-size: 1.16rem;
+    line-height: 1.05;
+  }
+
+  .info-card p {
+    font-size: 0.94rem;
+    line-height: 1.45;
   }
 
   .hero-support-grid,
