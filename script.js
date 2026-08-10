@@ -38,6 +38,7 @@ const siteSnackbar = document.getElementById("site-snackbar");
 const joinBanner = document.getElementById("join-banner");
 const joinCodeLabel = document.getElementById("join-code-label");
 const joinOpenApp = document.getElementById("join-open-app");
+const joinDownloadApp = document.getElementById("join-download-app");
 const heroCards = Array.from(document.querySelectorAll(".hero-support-grid .support-card"));
 const featureCards = Array.from(document.querySelectorAll(".feature-grid .feature-card-button"));
 const heroCopy = document.querySelector(".hero-copy");
@@ -65,6 +66,25 @@ const ctaReviews = [
   },
 ];
 
+const appStoreUrl = "https://apps.apple.com/us/app/geobingo-geography-quiz/id6758577949";
+const playStoreUrl = "https://play.google.com/store/apps/details?id=com.wardvereecken.geobingo&hl=en";
+
+function getDownloadUrl() {
+  const userAgent = navigator.userAgent || "";
+  const isAppleDevice =
+    /iPhone|iPad|iPod/i.test(userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroidDevice = /Android/i.test(userAgent);
+
+  if (isAppleDevice) {
+    return appStoreUrl;
+  }
+  if (isAndroidDevice) {
+    return playStoreUrl;
+  }
+  return "#download";
+}
+
 function getMultiplayerJoinCode() {
   const params = new URLSearchParams(window.location.search);
   const rawCode = params.get("code") || params.get("session") || "";
@@ -78,8 +98,32 @@ function setupJoinBanner() {
     return;
   }
 
+  const deepLink = `geobingo://join?code=${encodeURIComponent(code)}`;
+  const downloadUrl = getDownloadUrl();
   joinCodeLabel.textContent = code;
-  joinOpenApp.href = `geobingo://join?code=${encodeURIComponent(code)}`;
+  joinOpenApp.href = deepLink;
+  if (joinDownloadApp) {
+    joinDownloadApp.href = downloadUrl;
+    if (downloadUrl !== "#download") {
+      joinDownloadApp.target = "_blank";
+      joinDownloadApp.rel = "noreferrer";
+    }
+  }
+  joinOpenApp.addEventListener("click", (event) => {
+    if (downloadUrl === "#download") {
+      return;
+    }
+
+    event.preventDefault();
+    const openedAt = Date.now();
+    window.location.href = deepLink;
+    window.setTimeout(() => {
+      if (document.hidden || Date.now() - openedAt > 1800) {
+        return;
+      }
+      window.location.href = downloadUrl;
+    }, 1100);
+  });
   joinBanner.hidden = false;
 }
 
