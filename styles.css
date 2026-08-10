@@ -292,6 +292,11 @@ button {
   height: 18px;
 }
 
+.button-store span:not(.store-icon) {
+  min-width: 0;
+  white-space: nowrap;
+}
+
 .hero {
   width: min(calc(100% - 32px), var(--site-width));
   margin: 22px auto 0;
