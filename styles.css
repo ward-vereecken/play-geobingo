@@ -152,10 +152,15 @@ button {
 }
 
 .join-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr);
   align-items: stretch;
-  gap: 12px;
-  flex: 0 0 auto;
+  gap: 10px;
+  flex: 0 1 320px;
+}
+
+.join-actions .button {
+  width: 100%;
 }
 
 .join-eyebrow {
@@ -1740,7 +1745,7 @@ body.page-ready .hero-support-grid .support-card:nth-child(8) {
 
   .join-actions {
     justify-content: center;
-    flex-wrap: wrap;
+    width: 100%;
   }
 
   .topnav {
@@ -1833,7 +1838,7 @@ body.page-ready .hero-support-grid .support-card:nth-child(8) {
 
   .join-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     width: 100%;
   }
 
