@@ -35,6 +35,9 @@ let heroCardSnackLocked = false;
 let heroSnackHideTimer = null;
 
 const siteSnackbar = document.getElementById("site-snackbar");
+const joinBanner = document.getElementById("join-banner");
+const joinCodeLabel = document.getElementById("join-code-label");
+const joinOpenApp = document.getElementById("join-open-app");
 const heroCards = Array.from(document.querySelectorAll(".hero-support-grid .support-card"));
 const featureCards = Array.from(document.querySelectorAll(".feature-grid .feature-card-button"));
 const heroCopy = document.querySelector(".hero-copy");
@@ -61,6 +64,26 @@ const ctaReviews = [
     text: "So far the app is great, it’s the Duolingo of geography.",
   },
 ];
+
+function getMultiplayerJoinCode() {
+  const params = new URLSearchParams(window.location.search);
+  const rawCode = params.get("code") || params.get("session") || "";
+  const code = rawCode.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return code.length >= 6 ? code : "";
+}
+
+function setupJoinBanner() {
+  const code = getMultiplayerJoinCode();
+  if (!code || !joinBanner || !joinCodeLabel || !joinOpenApp) {
+    return;
+  }
+
+  joinCodeLabel.textContent = code;
+  joinOpenApp.href = `geobingo://join?code=${encodeURIComponent(code)}`;
+  joinBanner.hidden = false;
+}
+
+setupJoinBanner();
 
 function showSiteSnackbar(message, duration = 5200) {
   if (!siteSnackbar) {

@@ -118,6 +118,47 @@ button {
   gap: 20px;
 }
 
+.join-banner {
+  position: relative;
+  z-index: 1;
+  width: min(calc(100% - 32px), var(--site-width));
+  margin: 18px auto 0;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--border-purple);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.join-banner[hidden] {
+  display: none;
+}
+
+.join-banner h2 {
+  margin: 2px 0 4px;
+  color: var(--ink-strong);
+  font-family: "Baloo 2", system-ui, sans-serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1;
+}
+
+.join-banner p {
+  margin: 0;
+  max-width: 620px;
+}
+
+.join-eyebrow {
+  color: var(--primary-strong);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -1676,6 +1717,12 @@ body.page-ready .hero-support-grid .support-card:nth-child(8) {
   .topbar {
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .join-banner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
   }
 
   .topnav {
