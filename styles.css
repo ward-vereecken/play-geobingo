@@ -156,7 +156,8 @@ button {
   grid-template-columns: minmax(220px, 1fr);
   align-items: stretch;
   gap: 10px;
-  flex: 0 1 320px;
+  width: min(100%, 320px);
+  flex: 0 1 auto;
 }
 
 .join-actions .button {
